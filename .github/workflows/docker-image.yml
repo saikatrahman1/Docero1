@@ -41,22 +41,41 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    # Build the Docker image
-    - name: Build the Docker image
+   # Build, Tag, and Push Docker image
+    - name: Build and push Docker image
       run: |
-        IMAGE_TAG=doceroapp:$(date +%s)
+        TIMESTAMP=$(date +%s)
+        IMAGE_TAG=doceroapp:$TIMESTAMP
+        DOCKER_HUB_IMAGE=saikat0123/doceroapp:$TIMESTAMP
+
+        # Build
         docker build . --file ./Docero/Dockerfile --tag $IMAGE_TAG
         echo "Built image: $IMAGE_TAG"
 
-    # Tag the image with Docker Hub repository
-    - name: Tag Docker image
-      run: |
-        IMAGE_TAG=saikat0123/doceroapp:$(date +%s)
-        docker tag $IMAGE_TAG saikat0123/doceroapp:$IMAGE_TAG
-        echo "Tagged image: saikat0123/doceroapp:$IMAGE_TAG"
+        # Tag
+        docker tag $IMAGE_TAG $DOCKER_HUB_IMAGE
+        echo "Tagged image: $DOCKER_HUB_IMAGE"
 
-    # Push the image to Docker Hub
-    - name: Push Docker image
-      run: |
-        IMAGE_TAG=doceroapp:$(date +%s)
-        docker push saikat0123/doceroapp:$IMAGE_TAG
+        # Push
+        docker push $DOCKER_HUB_IMAGE
+        echo "Pushed image: $DOCKER_HUB_IMAGE"
+
+    # # Build the Docker image
+    # - name: Build the Docker image
+    #   run: |
+    #     IMAGE_TAG=doceroapp:$(date +%s)
+    #     docker build . --file ./Docero/Dockerfile --tag $IMAGE_TAG
+    #     echo "Built image: $IMAGE_TAG"
+
+    # # Tag the image with Docker Hub repository
+    # - name: Tag Docker image
+    #   run: |
+    #     IMAGE_TAG=saikat0123/doceroapp:$(date +%s)
+    #     docker tag $IMAGE_TAG saikat0123/doceroapp:$IMAGE_TAG
+    #     echo "Tagged image: saikat0123/doceroapp:$IMAGE_TAG"
+
+    # # Push the image to Docker Hub
+    # - name: Push Docker image
+    #   run: |
+    #     IMAGE_TAG=doceroapp:$(date +%s)
+    #     docker push saikat0123/doceroapp:$IMAGE_TAG
