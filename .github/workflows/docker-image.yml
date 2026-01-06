@@ -51,7 +51,7 @@ jobs:
     # Tag the image with Docker Hub repository
     - name: Tag Docker image
       run: |
-        IMAGE_TAG=doceroapp:$(date +%s)
+        IMAGE_TAG=saikat0123/doceroapp:$(date +%s)
         docker tag $IMAGE_TAG saikat0123/doceroapp:$IMAGE_TAG
         echo "Tagged image: saikat0123/doceroapp:$IMAGE_TAG"
 
