@@ -1,3 +1,23 @@
+# name: Docker Image CI
+
+# on:
+#   push:
+#     branches: [ "master" ]
+#   pull_request:
+#     branches: [ "master" ]
+
+# jobs:
+
+#   build:
+
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - uses: actions/checkout@v4
+#     - name: Build the Docker image
+#       run: docker build . --file ./Docero/Dockerfile --tag doceroapp:$(date +%s)
+
+
 name: Docker Image CI
 
 on:
@@ -7,12 +27,36 @@ on:
     branches: [ "master" ]
 
 jobs:
-
   build:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+
+    # Login to Docker Hub
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    # Build the Docker image
     - name: Build the Docker image
-      run: docker build . --file ./Docero/Dockerfile --tag doceroapp:$(date +%s)
+      run: |
+        IMAGE_TAG=doceroapp:$(date +%s)
+        docker build . --file ./Docero/Dockerfile --tag $IMAGE_TAG
+        echo "Built image: $IMAGE_TAG"
+
+    # Tag the image with Docker Hub repository
+    - name: Tag Docker image
+      run: |
+        IMAGE_TAG=doceroapp:$(date +%s)
+        docker tag $IMAGE_TAG saikat0123/doceroapp:$IMAGE_TAG
+        echo "Tagged image: saikat0123/doceroapp:$IMAGE_TAG"
+
+    # Push the image to Docker Hub
+    - name: Push Docker image
+      run: |
+        IMAGE_TAG=doceroapp:$(date +%s)
+        docker push saikat0123/doceroapp:$IMAGE_TAG
